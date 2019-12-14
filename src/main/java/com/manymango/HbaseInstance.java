@@ -2,8 +2,10 @@ package com.manymango;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HBaseConfiguration;
+import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.client.Connection;
 import org.apache.hadoop.hbase.client.ConnectionFactory;
+import org.apache.hadoop.hbase.client.Table;
 
 import java.io.IOException;
 
@@ -16,17 +18,20 @@ public class HbaseInstance {
 
     private static Connection connection;
 
-    public static Connection getConnection() {
+    public static Connection getConnection() throws IOException {
         if (null == connection) {
             Configuration conf = HBaseConfiguration.create();
             conf.set("hbase.zookeeper.quorum", "localhost");
-            try {
-                connection = ConnectionFactory.createConnection(conf);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            connection = ConnectionFactory.createConnection(conf);
         }
         return connection;
+    }
+
+
+
+    public static Table getTable(String name) throws IOException {
+        Connection connection = getConnection();
+        return connection.getTable(TableName.valueOf(name));
     }
 
 
